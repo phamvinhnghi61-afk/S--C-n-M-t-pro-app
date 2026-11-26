@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="app-title">SỔ CÂN MÍT</title>
+    <!-- Thư viện FontAwesome để hiển thị icon và SweetAlert2 để tạo thông báo đẹp -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #0c5a30;
+            --secondary-color: #e67e22;
+            --accent-color: #f1c40f;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.4;
+            padding-bottom: 80px; /* Chừa khoảng trống cho footer cố định */
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #094424, var(--primary-color));
+            color: white;
+            padding: 12px 15px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: var(--accent-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .btn-icon:active {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0.9);
+        }
+
+        .btn-add-new {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
