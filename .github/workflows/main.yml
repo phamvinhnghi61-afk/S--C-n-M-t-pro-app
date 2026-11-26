@@ -1,98 +1,52 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="app-title">SỔ CÂN MÍT</title>
-    <!-- Thư viện FontAwesome để hiển thị icon và SweetAlert2 để tạo thông báo đẹp -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --primary-color: #0c5a30;
-            --secondary-color: #e67e22;
-            --accent-color: #f1c40f;
-            --bg-color: #f4f6f8;
-            --card-bg: #ffffff;
-            --text-color: #2c3e50;
-            --border-radius: 12px;
-        }
+name: Build Android APK
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.4;
-            padding-bottom: 80px; /* Chừa khoảng trống cho footer cố định */
-        }
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-        /* HEADER */
-        header {
-            background: linear-gradient(135deg, #094424, var(--primary-color));
-            color: white;
-            padding: 12px 15px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-        .brand-title {
-            font-size: 20px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            color: var(--accent-color);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-        .header-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+      - name: Prepare Web Assets
+        run: |
+          mkdir -p www
+          if [ -f "index.html" ]; then cp index.html www/; fi
+          if [ -f "SoCanMit.html" ]; then cp SoCanMit.html www/index.html; fi
+          if [ -f "so_can_mit_pro_db.html" ]; then cp so_can_mit_pro_db.html www/index.html; fi
 
-        .btn-icon {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 8px;
-            border-radius: 50%;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: 0.2s;
-        }
+      - name: Initialize Capacitor Android Project
+        run: |
+          npm init -y
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npx cap init "So Can Mit Pro" "vn.io.linhkienpinthapmuoi.socanmit" --web-dir=www
+          npx cap add android
+          npx cap sync android
 
-        .btn-icon:active {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(0.9);
-        }
+      - name: Build Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
-        .btn-add-new {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 13px;
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoCanMitPro-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
